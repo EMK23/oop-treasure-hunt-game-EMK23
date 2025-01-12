@@ -11,13 +11,13 @@ class Player:
         self.fuel = fuel
         self.inventory = []
         self.health = 100
-        self.max_health = 100  # Max health to prevent exceeding it
+        self.max_health = 100 
         self.defeated_boss = False
         self.level = 1
         self.experience = 0
     
     def collect_item(self, item):
-        if len(self.inventory) >= 5:  # Limit to 5 items
+        if len(self.inventory) >= 5:  
             print("Your inventory is full! You can't pick up this item.")
         else:
             print(f"{self.name} collects {item.name}.")
@@ -60,12 +60,12 @@ class Player:
             if choice == "1":
                 damage = self.power // 2  # Reduced damage
             elif choice == "2":
-                damage = int(self.power * 1.5)  # Moderate damage
+                damage = int(self.power * 1.5)  
             elif choice == "3":
-                damage = self.power // 3  # Low damage
+                damage = self.power // 3  
             elif choice == "4":
                 self.use_item()
-                continue  # Skip enemy's turn if an item is used
+                continue  
             else:
                 print("Invalid choice. Using normal attack.")
                 damage = self.power // 2
@@ -74,8 +74,8 @@ class Player:
             if enemy.health <= 0:
                 print(f"\n{enemy.name} has been defeated!")
                 self.defeated_boss = True
-                self.experience += 50  # Reward experience for defeating the boss
-                self.level_up()  # Level up after defeating the boss
+                self.experience += 50  
+                self.level_up()  
                 break
 
             enemy.attack(self)
@@ -89,14 +89,14 @@ class Player:
         self.health -= damage
         print(f"{self.name} takes {damage} damage, health is now {self.health}")
         if self.health < 0:
-            self.health = 0  # Ensure health doesn't go below 0
+            self.health = 0 
 
     def level_up(self):
         if self.experience >= self.level * 100:
             self.level += 1
             self.power += 10
             self.health += 20
-            if self.health > self.max_health:  # Prevent health from exceeding max limit
+            if self.health > self.max_health: 
                 self.health = self.max_health
             print(f"\n{self.name} leveled up! Level {self.level}. Power: {self.power}, Health: {self.health}")
 
@@ -116,7 +116,7 @@ class Player:
             if 0 <= choice_idx < len(self.inventory):
                 item = self.inventory[choice_idx]
                 item.use(self)
-                self.inventory.pop(choice_idx)  # Remove the item after use
+                self.inventory.pop(choice_idx)
             else:
                 print("Invalid selection. No item used.")
         except ValueError:
@@ -127,18 +127,18 @@ class Player:
 class Item:
     def __init__(self, name, effect_type, value, size=1):
         self.name = name
-        self.effect_type = effect_type  # 'damage' or 'heal'
+        self.effect_type = effect_type
         self.value = value
-        self.size = size  # Add size attribute
+        self.size = size
 
     def use(self, player):
         if self.effect_type == 'damage':
             print(f"{self.name} increases your attack damage by {self.value}!")
-            player.power += self.value  # Increase the player's power (attack damage)
+            player.power += self.value
         elif self.effect_type == 'heal':
             print(f"{self.name} heals you for {self.value} health!")
             player.health += self.value
-            if player.health > player.max_health:  # Ensure player doesn't exceed max health
+            if player.health > player.max_health:
                 player.health = player.max_health
         else:
             print(f"{self.name} has no effect.")
@@ -172,22 +172,20 @@ class Planet:
     def generate_planet(self):
         grid = [["empty" for _ in range(self.size)] for _ in range(self.size)]
 
-        # Place 1-2 items randomly on the planet
         num_items = random.randint(1, 2)
         for _ in range(num_items):
             while True:
                 x, y = random.randint(0, self.size - 1), random.randint(0, self.size - 1)
-                if grid[y][x] == "empty":  # Place only in empty cells
+                if grid[y][x] == "empty":
                     item_type = "heal" if random.random() < 0.5 else "damage"
                     item = Item(
                         name="Healing Potion" if item_type == "heal" else "Power Booster",
                         effect_type=item_type,
                         value=random.randint(10, 20),
                     )
-                    grid[y][x] = item  # Store the Item object in the grid
+                    grid[y][x] = item
                     break
 
-        # Ensure 3–4 fuel spots
         num_fuel = random.randint(3, 4)
         for _ in range(num_fuel):
             while True:
@@ -229,10 +227,10 @@ class Planet:
         x, y = player.location
         current_cell = self.grid[y][x]
 
-        if isinstance(current_cell, Item):  # Check if the cell contains an Item object
+        if isinstance(current_cell, Item):
             print(f"You found an item at {player.location}! {current_cell.name} collected.")
-            player.collect_item(current_cell)  # Use the player's collect_item method
-            self.grid[y][x] = "empty"  # Mark the cell as empty after collection
+            player.collect_item(current_cell) 
+            self.grid[y][x] = "empty"
         elif current_cell == 'fuel':
             fuel = random.randint(1, 5)
             player.fuel += fuel
@@ -308,7 +306,7 @@ class Universe:
 
     def show_planets(self, player):
         print("\nAvailable Planets on the Universe Map:")
-        reachable = False  # To check if the player can reach any planet
+        reachable = False 
         for idx, planet in enumerate(self.planets):
             distance = abs(planet.location[0] - player.location[0]) + abs(planet.location[1] - player.location[1])
             if player.fuel >= distance:
@@ -323,7 +321,7 @@ class Universe:
                 reachable = True
             else:
                 print(f"L: {self.locked_planet.name} at {self.locked_planet.location} (Distance: {distance}) - Not enough fuel")
-        return reachable  # Return whether any planets are reachable
+        return reachable 
 
 def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -337,7 +335,6 @@ def main():
         clear_terminal()
         universe.display(player)
         
-        # Check if there are reachable planets
         if not universe.show_planets(player):
             print("\nYou have no fuel left to visit any planets. GAME OVER!")
             break
