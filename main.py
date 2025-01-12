@@ -32,7 +32,6 @@ class Player:
                 print(f"  {item.name} - {item.effect_type.capitalize()} ({item.value})")
 
     def move(self, direction, planet_size):
-        # Only update position without fuel loss
         if direction == "w" and self.location[1] > 0:
             self.location = (self.location[0], self.location[1] - 1)
         elif direction == "s" and self.location[1] < planet_size - 1:
@@ -58,7 +57,7 @@ class Player:
 
             choice = input("Enter 1, 2, 3, or 4: ")
             if choice == "1":
-                damage = self.power // 2  # Reduced damage
+                damage = self.power // 2
             elif choice == "2":
                 damage = int(self.power * 1.5)  
             elif choice == "3":
